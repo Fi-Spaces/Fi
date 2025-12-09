@@ -1,7 +1,5 @@
-# Fi--
-# Fi-- (Fi Double Dash)
-
-> **The φ-Enhanced Runtime & Communication Protocol Suite**  
+# Fi φ
+ **The φ -Enhanced Runtime & Communication Protocol Suite**  
 > *Where the Golden Ratio (φ) rewrites the rules of spacetime and computation.*
 
 [![Fi-Spaces Org](https://img.shields.io/badge/Fi--Spaces-φ%20Native-000000?style=flat&logo=github)](https://github.com/Fi-Spaces)
