@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.23;
+pragma solidity ^0.8.33;
 
 import {IERC7914} from "./interfaces/IERC7914.sol";
-import {TransientNativeAllowance} from "./libraries/TransientNativeAllowance.sol";
 import {BaseAuthorization} from "./BaseAuthorization.sol";
 
 /// @title ERC-7914
@@ -11,6 +10,7 @@ import {BaseAuthorization} from "./BaseAuthorization.sol";
 /// https://github.com/ethereum/ERCs/blob/8380220418521ff1995445cff5ca1d0e496a3d2d/ERCS/erc-7914.md
 abstract contract ERC7914 is IERC7914, BaseAuthorization {
     mapping(address spender => uint256 allowance) public nativeAllowance;
+    transient mapping(address spender => uint256 allowance) private _transientNativeAllowance;
 
     /// @inheritdoc IERC7914
     function approveNative(address spender, uint256 amount) external onlyThis returns (bool) {
@@ -21,7 +21,7 @@ abstract contract ERC7914 is IERC7914, BaseAuthorization {
 
     /// @inheritdoc IERC7914
     function approveNativeTransient(address spender, uint256 amount) external onlyThis returns (bool) {
-        TransientNativeAllowance.set(spender, amount);
+        _transientNativeAllowance[spender] = amount;
         emit ApproveNativeTransient(address(this), spender, amount);
         return true;
     }
@@ -44,7 +44,7 @@ abstract contract ERC7914 is IERC7914, BaseAuthorization {
 
     /// @inheritdoc IERC7914
     function transientNativeAllowance(address spender) public view returns (uint256) {
-        return TransientNativeAllowance.get(spender);
+        return _transientNativeAllowance[spender];
     }
 
     /// @dev Internal function to validate and execute transfers
@@ -67,7 +67,7 @@ abstract contract ERC7914 is IERC7914, BaseAuthorization {
                 newAllowance = currentAllowance - amount;
             }
             if (isTransient) {
-                TransientNativeAllowance.set(msg.sender, newAllowance);
+                _transientNativeAllowance[msg.sender] = newAllowance;
             } else {
                 nativeAllowance[msg.sender] = newAllowance;
                 emit NativeAllowanceUpdated(msg.sender, newAllowance);
