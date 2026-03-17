@@ -1,0 +1,6 @@
+# Foundry build artifacts
+cache/
+out/
+
+# Installed dependencies (not vendored)
+lib/forge-std/
